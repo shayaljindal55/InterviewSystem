@@ -1,0 +1,70 @@
+﻿@model IEnumerable<InterviewSystem.Models.CandidateResult>
+
+    @{
+        ViewBag.Title = "Candidates Rank List";
+    }
+
+    <h2 style="color:coral">Candidates Rank List</h2>
+
+
+    <table class="table">
+        <tr>
+            <th style="color:green">
+                @Html.DisplayNameFor(model => model.FirstName)
+            </th>
+            <th style="color:green">
+                @Html.DisplayNameFor(model => model.LastName)
+            </th>
+
+            <th style="color:green">
+                @Html.DisplayNameFor(model => model.Rank)
+            </th>
+
+            <th style="color:green">
+                @Html.DisplayNameFor(model => model.Result)
+            </th>
+
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FirstName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LastName)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.Rank)
+                </td>
+                <td>
+
+                    <table>
+                        <thead style="color:ThreeDFace">
+                            <tr>
+                                <td>Round Name</td>
+                                <td>Avg Rating<br />(Out of 5)</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var userRound in item.InterviewRounds)
+                            {
+                                var Rating = Convert.ToDecimal(userRound.TotalRating) / userRound.TotalRound;
+                                var avgRating = Math.Round(Rating, 2);
+                                <tr>
+                                    <td>@userRound.RoundName</td>
+                                    <td>@avgRating</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+                </td>
+
+            </tr>
+        }
+
+    </table>
+    

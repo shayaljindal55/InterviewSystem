@@ -1,0 +1,253 @@
+﻿@model InterviewSystem.Models.CandidateDetailsModel
+@using Microsoft.AspNet.Identity
+@{
+    ViewBag.Title = "Edit Your Profile";
+    }
+<link href="~/Content/themes/base/all.css" rel="stylesheet" />
+<link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+
+<h2 align="center" style="color:coral">Edit Your Profile</h2>
+<ul class="nav navbar-nav" style="float: none; border: 1px solid #ddd; margin-bottom: 10px; background: #eee; ">
+    <li>
+        @Html.ActionLink("Welcome " + User.Identity.GetUserName() + "!", "EditUserProfile", "Cand_Manage", new { area = "Candidate" }, htmlAttributes: new { title = "Manage" })
+    </li>
+    @*@Html.ActionLink("Hello " + User.Identity.GetUserName() + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })*@
+    @*<li>
+        @Html.ActionLink("LogOff", "LogOff", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" })
+    </li>*@
+    <li>
+        @Html.ActionLink("View Result", "ViewResult")
+    </li>
+    @*@Html.Partial("_LoginPartial")*@
+    <li>
+        @Html.ActionLink("Back to Home Page", "Index", "Home", new { area = "" }, null)
+    </li>
+</ul>
+<div class="clearfix"></div>
+
+@using (Html.BeginForm("EditUserProfile", "Cand_Manage", new { area = "Candidate" }, FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+   @Html.AntiForgeryToken()
+    <div class="col-md-4">
+      
+        <img id="imgLoad" src="@(string.IsNullOrEmpty(Model.CandidateDetails.Image) ? Url.Content("~/images/default-user.png") : Url.Content("~/images/Candidate_Profile/" + Model.CandidateDetails.Image))" alt="" style="visibility: visible; position: relative; width:150px; height:200px" onchange="" />
+        @*<img id="img" alt="" src="~/images/Candidate_Profile/" style="visibility: hidden; position: absolute" />*@
+        @*<img id="img" src="#" alt="My Profile Image" style="visibility: hidden; position: absolute" />*@
+        <br />
+        @*<label for="file">Upload Image:</label>*@
+        @*<input type="button" name="RemoveImage" value="Remove Image" onclick="removeImage()" style="visibility:visible"/>*@<br />
+        <input type="file" name="file" id="file" style="width: 100%;" onchange="readURL(this);" />
+        <input type="submit" value="Upload" class="submit" />
+        </div>
+    <div class="col-md-8">
+        <div class="form-horizontal">
+            <h4 style="color:green">Your Details</h4>
+            <hr />
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.HiddenFor(model => model.CandidateDetails.ID)
+            @*<input type="hidden" id="UserId" value="@ViewBag["Id"]">*@
+            <div class="form-group">
+                @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.CandidateDetails.DateOfBirth, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.TextBoxFor(model => model.CandidateDetails.DateOfBirth, new { @class = "form-control", id = "Cand_Dob1" })
+                    @Html.ValidationMessageFor(model => model.CandidateDetails.DateOfBirth, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.CandidateDetails.Phone, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.CandidateDetails.Phone, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.CandidateDetails.Phone, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.CandidateDetails.Degree, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.CandidateDetails.Degree, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.CandidateDetails.Degree, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.CandidateDetails.DegreeAggregate, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.CandidateDetails.DegreeAggregate, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.CandidateDetails.DegreeAggregate, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.CandidateDetails.ApplyingForPost, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownList("ApplyingForPost", ViewBag.ApplyingForPost as IEnumerable<SelectListItem>, "Select Post", new { @class = "form-control" })
+
+
+                    @*@Html.DropDownListFor(x => x.CandidateDetails.ApplyingForPost, ViewBag.ApplyingForPost as IEnumerable<SelectListItem>, "Select Post", new { @class = "form-control" })*@
+                    @*@Html.EditorFor(model => model.CandidateDetails.ApplyingForPost, new { htmlAttributes = new { @class = "form-control" } })*@
+                    @Html.ValidationMessageFor(model => model.CandidateDetails.ApplyingForPost, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            @*<div class="form-group">
+                @Html.LabelFor(model => model.CandidateDetails.Password, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.CandidateDetails.Password, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.CandidateDetails.Password, "", new { @class = "text-danger" })
+                </div>
+            </div>*@
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.CandidateDetails.Gender, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.CandidateDetails.Gender, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.CandidateDetails.Gender, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.CandidateDetails.MaritalStatus, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.CandidateDetails.MaritalStatus, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.CandidateDetails.MaritalStatus, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.CandidateDetails.Address, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.CandidateDetails.Address, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.CandidateDetails.Address, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.CandidateDetails.PinCode, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.CandidateDetails.PinCode, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.CandidateDetails.PinCode, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.CandidateDetails.YearOfPassing, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.CandidateDetails.YearOfPassing, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.CandidateDetails.YearOfPassing, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.CandidateDetails.StandingBackLogs, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.CandidateDetails.StandingBackLogs, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.CandidateDetails.StandingBackLogs, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.CandidateDetails.GapInEducation, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    <div class="checkbox">
+
+                       <div>@Html.RadioButtonFor(model => model.CandidateDetails.GapInEducation, true, new { })<span>Yes</span></div>
+                       <div>@Html.RadioButtonFor(model => model.CandidateDetails.GapInEducation, false, new { }) <span>NO</span></div>
+                        @Html.ValidationMessageFor(model => model.CandidateDetails.GapInEducation, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.CandidateDetails.NumberOfGapYears, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.CandidateDetails.NumberOfGapYears, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.CandidateDetails.NumberOfGapYears, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.CandidateDetails.ExperienceInYears, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.CandidateDetails.ExperienceInYears, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.CandidateDetails.ExperienceInYears, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.CandidateDetails.PreviousOrganization, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.CandidateDetails.PreviousOrganization, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.CandidateDetails.PreviousOrganization, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Save" class="btn btn-default" />
+                </div>
+            </div>
+        </div>
+        </div>
+}
+
+<script src="~/Scripts/JavaScriptUI.js"></script>
+        @*@section Scripts {
+            @Scripts.Render("~/bundles/jqueryval")
+        }*@
+<script type="text/javascript">
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('#imgLoad')
+                    .attr('src', e.target.result)
+                    .width(150)
+                    .height(200)
+                .css('visibility', 'visible');
+
+
+            };
+            //$('#imgLoad').css('visibility', 'hidden');
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+    //function removeImage() {
+    //    debugger;
+    //    var newSrc = '/images/default-user.png';
+    //    $('#imgLoad').attr('src', newSrc)
+    //    $.ajax({
+    //        type: "POST",
+    //        url: "http://localhost:50201/Candidate/Cand_Manage/RemoveProfileImage",
+    //        contentType: "application/json; charset=utf-8",
+    //        dataType: "json",
+    //        async: false,
+    //        success: function (response) {
+    //            alert(response);
+    //        },
+    //        failure: function (response) {
+    //            alert(response);
+    //        }
+    //    });
+    //}
+    $(document).ready(function(){
+        $('#Cand_Dob1').datepicker();
+    });
+</script>

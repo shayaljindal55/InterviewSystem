@@ -1,0 +1,154 @@
+﻿@model InterviewSystem.Models.InterviewerDetailsModel
+@using Microsoft.AspNet.Identity
+@{
+    ViewBag.Title = "Edit Your Profile";
+}
+<script src="~/Scripts/jquery-2.2.1.min.js"></script>
+<script src="~/Scripts/jquery-ui-1.11.4.min.js"></script>
+<h2 align="center" style="color:coral">Edit Your Profile</h2>
+<script>
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('#imgLoad')
+                    .attr('src', e.target.result)
+                    .width(150)
+                    .height(200)
+                .css('visibility', 'visible');
+
+
+            };
+            //$('#imgLoad').css('visibility', 'hidden');
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    @*function removeImage() {
+        debugger;
+        var newSrc = '/images/default-user.png';
+        $('#imgLoad').attr('src', newSrc)
+        $.ajax({
+            type: "POST",
+            url:'@Url.Action("Int_Manage", "RemoveProfileImage", new { area = "Interviewer" })',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function (response) {
+                alert(response);
+            },
+            failure: function (response) {
+                alert(response);
+            }
+        });
+        }*@
+</script>
+
+@using (Html.BeginForm("SaveInterviewerProfile", "Int_Manage", new { area = "Interviewer" }, FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="col-md-12">
+        <ul class="nav navbar-nav navbar-right">
+            <li>
+                @Html.ActionLink("Welcome " + User.Identity.GetUserName() + "!", "EditInterviewerProfile", "Int_Manage", new { area = "Interviewer" }, htmlAttributes: new { title = "Manage" })
+            </li>
+            @*<li>
+                @Html.ActionLink("LogOff", "LogOff", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" })
+                </li>*@
+            <li>
+                @*@Html.Partial("_LoginPartial")*@
+                @Html.ActionLink("Give Rating", "GiveRating")
+            </li>
+            <li>
+                @Html.ActionLink("View Candidate Rank List", "ViewRank")
+            </li>
+            <li>
+                @Html.ActionLink("Back to Home Page", "Index", "Home", new { area = "" }, null)
+            </li>
+        </ul>
+    </div>
+    <div class="col-md-12">
+        <div class="col-md-4">
+            <img id="imgLoad" src="@(string.IsNullOrEmpty(Model.InterviewerDetails.Image) ? Url.Content("~/images/default-user.png") : Url.Content("~/images/Int_Profile/" + Model.InterviewerDetails.Image))" alt="" style="visibility: visible; position: relative; width:150px; height:200px" onchange="" />
+            @*<img id="img" alt="" src="~/images/Candidate_Profile/" style="visibility: hidden; position: absolute" />*@
+            @*<img id="img" src="#" alt="My Profile Image" style="visibility: hidden; position: absolute" />*@
+            <br />
+            @*<label for="file">Upload Image:</label>*@
+            @*<input type="button" name="RemoveImage" value="Remove Image" onclick="removeImage()" style="visibility:visible" />*@<br />
+            <input type="file" name="file" style="width: 100%;" onchange="readURL(this);" />
+            <input type="submit" value="Upload" class="submit" />
+        </div>
+        <div class="col-md-8">
+            <div class="form-horizontal">
+                <h4 style="color:green">Your Details</h4>
+                <hr />
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                @Html.HiddenFor(model => model.InterviewerDetails.ID)
+                @*<input type="hidden" id="UserId" value="@ViewBag["Id"]">*@
+                <div class="form-group">
+                    @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                @*<div class="form-group">
+                        @Html.LabelFor(model => model.InterviewerDetails.DateOfBirth, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.InterviewerDetails.DateOfBirth, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.InterviewerDetails.DateOfBirth, "", new { @class = "text-danger" })
+                        </div>
+                    </div>*@
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.InterviewerDetails.Phone, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.InterviewerDetails.Phone, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.InterviewerDetails.Phone, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.InterviewerDetails.Designation, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.InterviewerDetails.Designation, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.InterviewerDetails.Designation, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+
+
+                @*<div class="form-group">
+                        @Html.LabelFor(model => model.InterviewerDetails.Password, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.InterviewerDetails.Password, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.InterviewerDetails.Password, "", new { @class = "text-danger" })
+                        </div>
+                    </div>*@
+
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="submit" value="Save" class="btn btn-default" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

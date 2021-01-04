@@ -1,0 +1,104 @@
+﻿@model InterviewSystem.Models.GiveRating
+
+@{
+    ViewBag.Title = "Give Rating";
+}
+<script src="~/Scripts/jquery-2.2.1.min.js"></script>
+<script src="~/Scripts/jquery-ui-1.11.4.min.js"></script>
+<h2>Give Rating</h2>
+@using (Html.BeginForm("SaveRating", "Int_Manage", new { area = "Interviewer" }, FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <span>Select Post :</span>
+
+
+    @Html.DropDownListFor(x => x.InterviewForPost, ViewBag.InterviewForProfile as IEnumerable<SelectListItem>, "Select Post", new { @id = "postName", @class = "form-control" })
+
+    @Html.ValidationMessageFor(model => model.InterviewForPost, "", new { @class = "text-danger" })
+    <br />
+    @*foreach (var item in Model.Rounds)
+        {
+            var id = item.InterviewRounds.Department.Id + "_" + item.Id;
+            <input type="button" value="@item.Description" name="@item.Description" id="@id" class="roundName" onclick="DeptClick(this)"/>
+        }*@
+    <span>Select Round :</span>
+    @Html.DropDownListFor(x => x.Rounds, ViewBag.Rounds as IList<SelectListItem>, "Select Round", new { @id = "ddlRounds", @class = "form-control" })
+    <br />
+
+    <span>Candidate Name :</span>
+    @Html.DropDownListFor(x => x.CandidateId, ViewBag.CandidateDetails as IList<SelectListItem>, "Select User", new { @id = "ddlCandidate", @class = "form-control" })
+    <br />
+    <span>Enter Rating :</span>
+    @Html.TextBoxFor(x => x.Rate, new { @id = "rating", @class = "form-control" })
+    <br />
+    <input type="submit" name="Command" value="Save" id="save" />
+
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        var isRatingSaved = parseInt('@TempData["Rating"]');
+        if (isRatingSaved == 1) {
+            var rate = parseInt($('#Rate').val());
+            if (rate > 0) {
+                $("#Rate").prop('disabled', true);
+            }
+            else {
+                $("#Rate").prop('disabled', false);
+            }
+        }
+    });
+
+
+    $(document).ready(function () {
+        debugger;
+        $('#postName').change(function () {
+            debugger;
+            var postName = this.value;
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("GetRoundsList", "Int_Manage", new { area = "Interviewer" })",
+                data: { postName: postName },
+                dataType: 'json',
+                success: function (data) {
+                    //#ddlRounds  #ddlCandidate
+                    var roundhtml = "<option>Select Round</option>";
+                    $.each(data.rounds, function (index, val) {
+                        roundhtml += '<option value="' + val.Value + '">' + val.Text + '</option>';
+                    });
+                    $('#ddlRounds').html(roundhtml);
+                    var candhtml = "<option>Select Candidate Name</option>";
+                    $.each(data.candidateName, function (index, val) {
+                        candhtml += '<option value="' + val.Value + '">' + val.Text + '</option>';
+                    });
+                    $('#ddlCandidate').html(candhtml);
+                }
+            });
+            $('#ddlRounds').change(function () {
+                debugger;
+                var round = $('#ddlRounds').value = this.value;
+
+                $('#ddlCandidate').change(function () {
+                    debugger;
+                    var user = $('#ddlCandidate').value = this.value;
+
+
+                    //var roundSelected= $("#<%=ddlRounds.ClientID%>").val(); //id name for dropdown list
+                    $.ajax({
+                        type: "POST",
+                        url: "@Url.Action("GetRatingForTest", "Int_Manage", new { area = "Interviewer" })",
+                        data: ({ roundId: round, userId: user }),
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data > 0) {
+                                $('#rating').val("Already rated");
+                                $('#rating').prop('disabled', true);
+                                $('#save').prop('disabled', true);
+                            }
+                        }
+                    });
+                });
+            });
+        });
+    });
+</script>
